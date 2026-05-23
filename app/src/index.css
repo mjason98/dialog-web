@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap");
+@import "reactflow/dist/style.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Nunito", ui-rounded, system-ui, sans-serif;
+  color: #3a3149;
+  background: #fff7ee;
+}
+
+/* React Flow override - cute style */
+.react-flow__node {
+  border: none;
+  background: transparent;
+}
+.react-flow__edge-path {
+  stroke-width: 2.2;
+  stroke: #ff7a9f;
+}
+.react-flow__edge.conditional .react-flow__edge-path {
+  stroke-dasharray: 6 4;
+  stroke: #4e8cff;
+}
+.react-flow__edge.broken .react-flow__edge-path {
+  stroke: #ef4444;
+}
+.react-flow__edge-text {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #3a3149;
+}
+.react-flow__edge-textbg {
+  fill: #fff;
+}
+.react-flow__controls {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 0 0 rgba(58, 49, 73, 0.12);
+}
+.react-flow__attribution {
+  background: transparent;
+}

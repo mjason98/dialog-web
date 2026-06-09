@@ -6,7 +6,6 @@ const methodEmoji: Record<string, string> = {
   select: "👉",
   first: "1️⃣",
   random: "🎲",
-  all: "🌟",
 };
 
 export default function DialogueNode({

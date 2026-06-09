@@ -4,6 +4,7 @@ type Props = {
   onNew: () => void;
   onImport: (file: File) => void;
   onExport: () => void;
+  onPreview: () => void;
   onValidate: () => void;
   onUndo: () => void;
   onRedo: () => void;
@@ -16,6 +17,7 @@ export default function TopBar({
   onNew,
   onImport,
   onExport,
+  onPreview,
   onValidate,
   onUndo,
   onRedo,
@@ -57,6 +59,9 @@ export default function TopBar({
         }
       >
         💾 Export
+      </Btn>
+      <Btn onClick={onPreview} color="sky">
+        👀 Preview
       </Btn>
       <Btn onClick={onValidate} color="butter">
         🔎 Validate

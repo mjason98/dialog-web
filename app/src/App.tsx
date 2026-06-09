@@ -4,6 +4,7 @@ import DialogueGraph, {
   type EdgeSelection,
 } from "./components/DialogueGraph";
 import InspectorPanel from "./components/InspectorPanel";
+import PreviewModal from "./components/PreviewModal";
 import Resizer from "./components/Resizer";
 import TopBar from "./components/TopBar";
 import ValidationPanel from "./components/ValidationPanel";
@@ -25,7 +26,7 @@ import {
   updateOption,
 } from "./logic/dialogueActions";
 import { exportDialogueFile, importDialogueFile } from "./logic/importExport";
-import type { NodePositions } from "./logic/graphMapping";
+import { autoLayout, type NodePositions } from "./logic/graphMapping";
 import { hasErrors, validateDialogue } from "./logic/validation";
 import type {
   DialogueFile,
@@ -42,6 +43,7 @@ export default function App() {
   const [selectedBlock, setSelectedBlock] = useState<string | null>("root");
   const [selectedEdge, setSelectedEdge] = useState<EdgeSelection | null>(null);
   const [positions, setPositions] = useState<NodePositions>({});
+  const [showPreview, setShowPreview] = useState(false);
   const [leftWidth, setLeftWidth] = useState<number>(() => {
     const v = Number(localStorage.getItem("leftWidth"));
     return Number.isFinite(v) && v > 0 ? v : 224;
@@ -129,7 +131,7 @@ export default function App() {
         apply(data);
         setSelectedBlock(Object.keys(data)[0] ?? null);
         setSelectedEdge(null);
-        setPositions({});
+        setPositions(autoLayout(data));
       } catch (err) {
         alert(`Import failed: ${(err as Error).message}`);
       }
@@ -310,6 +312,7 @@ export default function App() {
         onNew={handleNew}
         onImport={handleImport}
         onExport={handleExport}
+        onPreview={() => setShowPreview(true)}
         onValidate={() => {
           if (issues.length === 0) alert("✓ all good!");
           else
@@ -403,6 +406,12 @@ export default function App() {
           setSelectedBlock(null);
         }}
       />
+      {showPreview && (
+        <PreviewModal
+          json={JSON.stringify(dialogue, null, 2)}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 }

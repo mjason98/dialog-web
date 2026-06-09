@@ -1,4 +1,4 @@
-export type DialogueMethod = "select" | "first" | "random" | "all";
+export type DialogueMethod = "select" | "first" | "random";
 
 export type DialogueOption = {
   key: string;
@@ -27,7 +27,6 @@ export const VALID_METHODS: DialogueMethod[] = [
   "select",
   "first",
   "random",
-  "all",
 ];
 
 export const RESERVED_KEYS = ["exit"];

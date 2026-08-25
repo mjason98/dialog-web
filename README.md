@@ -7,14 +7,20 @@ A cute, browser-only editor for creating and editing NPC dialogue JSON files for
 - Create, import, and export dialogue JSON files (game-ready, formatted).
 - Three resizable panels: block list, graph view, inspector.
 - Required graph view (React Flow) — drag nodes, pan, zoom, minimap.
+- Top-to-bottom flow: `root` on top, each depth level one row below; edges leave
+  the bottom of a node and enter the top of the next. Blocks you have not dragged
+  are auto-arranged by that layout.
+- Node tags show totals for the block's options: 🔒 checks, ⚡ actions.
 - Click a node to edit a block. Click an edge to edit an option.
 - Drag from a node handle to another node to create a new option.
 - Right-click the canvas to add a new block at that position.
-- Add, rename, duplicate, delete blocks. Reorder options and actions.
+- Add, rename, duplicate, delete blocks. Reorder options, checks, and actions.
+- Multiple checks per option (AND), editable as a reorderable list.
 - Live validation: broken links, missing fields, duplicates, unreachable blocks, invalid methods. Errors block export.
 - Undo / redo (Cmd/Ctrl+Z, Shift+Cmd/Ctrl+Z).
 - Special `exit` reserved key, rendered as a separate endpoint node.
-- Pastel styling, rounded corners, drop-shadow buttons.
+- Paper-and-ink styling: warm off-white surfaces, hairline rules, mono keys,
+  serif dialogue text. Red/amber are reserved for errors and warnings.
 
 ## Dialogue JSON Format
 
@@ -24,7 +30,7 @@ A cute, browser-only editor for creating and editing NPC dialogue JSON files for
     "message": "You are at root",
     "method": "select",
     "options": [
-      { "key": "exit", "check": "", "actions": [], "message": "leave" }
+      { "key": "exit", "checks": [], "actions": [], "message": "leave" }
     ]
   }
 }
@@ -32,7 +38,11 @@ A cute, browser-only editor for creating and editing NPC dialogue JSON files for
 
 - **method**: `select` | `first` | `random` | `all`
 - **option.key**: target block key (or `exit`)
-- **option.check**: optional condition string (empty = always enabled)
+- **option.checks**: array of condition strings. **All** must pass (AND) for the
+  option to be enabled; an empty array means always enabled.
+  Legacy files using a single `"check": "cond"` string are converted to
+  `"checks": ["cond"]` on import (`"check": ""` becomes `"checks": []`), and
+  export only writes `checks`.
 - **option.actions**: array of action strings
 - **option.message**: player-facing text (recommended when `method` is `select`)
 
@@ -70,7 +80,7 @@ Editor-only data (node positions, panel widths, selection) is never written to t
             ├── InspectorPanel.tsx
             ├── BlockEditor.tsx
             ├── OptionEditor.tsx
-            ├── ActionListEditor.tsx
+            ├── StringListEditor.tsx
             ├── ValidationPanel.tsx
             └── Resizer.tsx
 ```

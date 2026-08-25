@@ -35,7 +35,7 @@ export default function Resizer({ onResize, side }: Props) {
         document.body.style.cursor = "col-resize";
         document.body.style.userSelect = "none";
       }}
-      className="w-1.5 cursor-col-resize bg-rose-200 hover:bg-rose-400 active:bg-rose-500 transition-colors shrink-0"
+      className="w-1 cursor-col-resize bg-paper-300 hover:bg-ink-300 active:bg-ink-500 transition-colors shrink-0"
       title="drag to resize"
     />
   );

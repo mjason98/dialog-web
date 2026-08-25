@@ -2,7 +2,8 @@ export type DialogueMethod = "select" | "first" | "random";
 
 export type DialogueOption = {
   key: string;
-  check: string;
+  /** All checks must pass (AND) for the option to be enabled. Empty = always. */
+  checks: string[];
   actions: string[];
   message?: string;
 };

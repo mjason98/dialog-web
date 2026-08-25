@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap");
 @import "reactflow/dist/style.css";
 @tailwind base;
 @tailwind components;
@@ -12,39 +11,54 @@ body,
 }
 
 body {
-  font-family: "Nunito", ui-rounded, system-ui, sans-serif;
-  color: #3a3149;
-  background: #fff7ee;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #23211d;
+  background: #faf9f6;
 }
 
-/* React Flow override - cute style */
+/* React Flow override - paper & ink style */
 .react-flow__node {
   border: none;
   background: transparent;
 }
 .react-flow__edge-path {
-  stroke-width: 2.2;
-  stroke: #ff7a9f;
+  stroke-width: 1.5;
+  stroke: #6e685c;
 }
 .react-flow__edge.conditional .react-flow__edge-path {
-  stroke-dasharray: 6 4;
-  stroke: #4e8cff;
+  stroke-dasharray: 5 4;
+  stroke: #23211d;
 }
 .react-flow__edge.broken .react-flow__edge-path {
-  stroke: #ef4444;
+  stroke: #b91c1c;
+}
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #1a1815;
+  stroke-width: 2.2;
 }
 .react-flow__edge-text {
   font-size: 11px;
-  font-weight: 700;
-  fill: #3a3149;
+  font-weight: 600;
+  fill: #3d3a33;
 }
 .react-flow__edge-textbg {
-  fill: #fff;
+  fill: #faf9f6;
 }
 .react-flow__controls {
-  border-radius: 14px;
+  border: 1px solid #d7d2c4;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 4px 0 0 rgba(58, 49, 73, 0.12);
+  box-shadow: 0 1px 2px 0 rgba(35, 33, 29, 0.08);
+}
+.react-flow__controls-button {
+  background: #faf9f6;
+  border-bottom: 1px solid #e9e5db;
+  color: #3d3a33;
+  fill: #3d3a33;
+}
+.react-flow__controls-button:hover {
+  background: #f4f2ec;
 }
 .react-flow__attribution {
   background: transparent;

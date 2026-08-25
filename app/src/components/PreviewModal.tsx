@@ -27,30 +27,29 @@ export default function PreviewModal({ json, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/40 p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl border-4 border-rose-200 shadow-cute w-full max-w-2xl min-h-[80vh] max-h-[90vh] flex flex-col"
+        className="bg-paper-50 rounded-card border border-paper-300 shadow-soft w-full max-w-2xl min-h-[80vh] max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-2 px-4 py-3 border-b-4 border-rose-100">
-          <span className="text-lg font-extrabold text-ink flex items-center gap-2">
-            <span aria-hidden>👀</span>
-            <span>Preview JSON</span>
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-paper-300">
+          <span className="font-serif text-lg font-semibold text-ink">
+            Preview JSON
           </span>
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={handleCopy}
-              className="bg-mint-200 hover:bg-mint-300 border-mint-400 text-ink font-bold text-sm px-3 py-1.5 rounded-full border-2 shadow-cute active:translate-y-[2px] active:shadow-none transition"
+              className="bg-ink-900 hover:bg-ink-700 border-ink-900 text-paper-50 font-medium text-sm px-3 py-1.5 rounded-card border shadow-soft transition-colors"
             >
-              {copied ? "✓ Copied!" : "📋 Copy"}
+              {copied ? "Copied" : "Copy"}
             </button>
             <button
               onClick={onClose}
-              className="bg-white hover:bg-gray-100 border-gray-300 text-ink font-bold text-sm px-3 py-1.5 rounded-full border-2 shadow-cute active:translate-y-[2px] active:shadow-none transition"
+              className="bg-paper-50 hover:bg-paper-200 border-paper-300 text-ink font-medium text-sm px-3 py-1.5 rounded-card border shadow-soft transition-colors"
             >
-              ✕ Close
+              Close
             </button>
           </div>
         </div>
@@ -60,7 +59,7 @@ export default function PreviewModal({ json, onClose }: Props) {
           value={json}
           onFocus={(e) => e.target.select()}
           spellCheck={false}
-          className="flex-1 m-4 p-3 rounded-xl border-2 border-rose-100 bg-rose-50 font-mono text-xs text-ink resize-none focus:outline-none focus:ring-4 focus:ring-rose-200"
+          className="flex-1 m-4 p-3 rounded-card border border-paper-300 bg-paper-100 font-mono text-xs text-ink resize-none focus:outline-none focus:border-ink-500"
         />
       </div>
     </div>

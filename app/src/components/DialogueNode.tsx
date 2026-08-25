@@ -2,10 +2,10 @@ import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
 import type { DialogueNodeData } from "../logic/graphMapping";
 
-const methodEmoji: Record<string, string> = {
-  select: "👉",
-  first: "1️⃣",
-  random: "🎲",
+const methodMark: Record<string, string> = {
+  select: "◇",
+  first: "→",
+  random: "⁂",
 };
 
 export default function DialogueNode({
@@ -15,51 +15,93 @@ export default function DialogueNode({
   if (data.isExit) {
     return (
       <div
-        className={`px-4 py-2 rounded-full border-2 border-dashed font-bold text-ink shadow-cute bg-butter ${
-          selected ? "ring-4 ring-rose-300" : ""
+        className={`px-4 py-2 rounded-card border border-dashed border-ink-300 bg-paper-100 font-medium text-ink-700 text-sm ${
+          selected ? "ring-2 ring-ink-900" : ""
         }`}
       >
-        <Handle type="target" position={Position.Left} className="!bg-rose-400" />
-        🚪 exit
+        <Handle type="target" position={Position.Top} className="!bg-ink-500" />
+        exit
       </div>
     );
   }
   const isRoot = data.key === "root";
   const border = data.hasError
-    ? "border-red-400"
+    ? "border-red-700"
     : data.hasWarning
-      ? "border-amber-400"
+      ? "border-amber-700"
       : isRoot
-        ? "border-rose-400"
-        : "border-sky2-300";
-  const bg = isRoot ? "bg-rose-100" : "bg-white";
+        ? "border-ink-900"
+        : "border-paper-300";
+  const bg = isRoot ? "bg-paper-100" : "bg-paper-50";
   return (
     <div
-      className={`w-56 rounded-chonk ${bg} border-2 ${border} shadow-cute p-3 ${
-        selected ? "ring-4 ring-rose-300" : ""
+      className={`w-56 rounded-card ${bg} border ${border} shadow-soft p-3 ${
+        selected ? "ring-2 ring-ink-900" : ""
       }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-rose-400" />
-      <Handle type="source" position={Position.Right} className="!bg-mint-400" />
+      <Handle type="target" position={Position.Top} className="!bg-ink-500" />
+      <Handle type="source" position={Position.Bottom} className="!bg-ink-500" />
       <div className="flex items-center gap-1 mb-1">
-        <span className="text-sm font-extrabold text-ink truncate flex-1">
-          {isRoot ? "🏠 " : ""}
+        <span className="text-sm font-semibold text-ink truncate flex-1 font-mono">
           {data.key}
         </span>
-        {data.hasError && <span title="errors">⛔</span>}
+        {data.hasError && (
+          <span title="errors" className="text-red-700 font-bold">
+            !
+          </span>
+        )}
         {data.hasWarning && !data.hasError && (
-          <span title="warnings">⚠️</span>
+          <span title="warnings" className="text-amber-700 font-bold">
+            ?
+          </span>
         )}
       </div>
-      <div className="text-[10px] uppercase font-bold text-ink/60 mb-1">
-        {methodEmoji[data.method] ?? ""} {data.method}
+      <div className="text-[10px] uppercase tracking-wider font-semibold text-ink-500 mb-1">
+        {methodMark[data.method] ?? ""} {data.method}
       </div>
-      <div className="text-xs text-ink/80 line-clamp-3 italic mb-2 min-h-[2.4em]">
+      <div className="text-xs text-ink-700 line-clamp-3 italic mb-2 min-h-[2.4em] font-serif">
         {data.message ? `“${data.message}”` : "—"}
       </div>
-      <div className="text-[10px] font-bold text-ink/60">
-        {data.optionCount} option{data.optionCount === 1 ? "" : "s"}
+      <div className="flex items-center gap-1 flex-wrap">
+        <span className="text-[10px] font-medium text-ink-500 mr-auto">
+          {data.optionCount} option{data.optionCount === 1 ? "" : "s"}
+        </span>
+        {data.checkCount > 0 && (
+          <Tag
+            title={`${data.checkCount} check${
+              data.checkCount === 1 ? "" : "s"
+            } across this block's options`}
+          >
+            🔒 {data.checkCount}
+          </Tag>
+        )}
+        {data.actionCount > 0 && (
+          <Tag
+            title={`${data.actionCount} action${
+              data.actionCount === 1 ? "" : "s"
+            } across this block's options`}
+          >
+            ⚡ {data.actionCount}
+          </Tag>
+        )}
       </div>
     </div>
+  );
+}
+
+function Tag({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <span
+      title={title}
+      className="text-[10px] font-medium text-ink-700 px-1.5 py-0.5 rounded-sm border border-paper-300 bg-paper-100"
+    >
+      {children}
+    </span>
   );
 }

@@ -119,7 +119,7 @@ export default function DialogueGraph({
   );
 
   return (
-    <div className="h-full w-full bg-[#fdf3e7]">
+    <div className="h-full w-full bg-paper-50">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -159,20 +159,20 @@ export default function DialogueGraph({
         fitView
         proOptions={{ hideAttribution: true }}
       >
-        <Background color="#ffd6e3" gap={20} size={2} />
+        <Background color="#d7d2c4" gap={20} size={1} />
         <Controls showInteractive={false} />
         <MiniMap
           pannable
           zoomable
           nodeColor={(n) => {
             const d = n.data as DialogueNodeData;
-            if (d?.isExit) return "#fff3b0";
-            if (d?.hasError) return "#fecaca";
-            if (d?.hasWarning) return "#fde68a";
-            if (d?.key === "root") return "#ffc8d8";
-            return "#c4ddff";
+            if (d?.isExit) return "#e9e5db";
+            if (d?.hasError) return "#b91c1c";
+            if (d?.hasWarning) return "#b45309";
+            if (d?.key === "root") return "#23211d";
+            return "#9c9585";
           }}
-          maskColor="rgba(255,247,238,0.7)"
+          maskColor="rgba(250,249,246,0.75)"
         />
       </ReactFlow>
     </div>

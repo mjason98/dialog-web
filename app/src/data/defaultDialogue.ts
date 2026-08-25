@@ -5,7 +5,7 @@ export const defaultDialogue: DialogueFile = {
     message: "You are at root",
     method: "select",
     options: [
-      { key: "exit", check: "", actions: [], message: "leave" },
+      { key: "exit", checks: [], actions: [], message: "leave" },
     ],
   },
 };

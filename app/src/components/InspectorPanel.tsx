@@ -24,6 +24,15 @@ type Props = {
     index: number,
     patch: Partial<DialogueOption>,
   ) => void;
+  onAddCheck: (key: string, optIndex: number) => void;
+  onChangeCheck: (
+    key: string,
+    optIndex: number,
+    checkIndex: number,
+    value: string,
+  ) => void;
+  onDeleteCheck: (key: string, optIndex: number, checkIndex: number) => void;
+  onMoveCheck: (key: string, optIndex: number, from: number, to: number) => void;
   onAddAction: (key: string, optIndex: number) => void;
   onChangeAction: (
     key: string,
@@ -58,7 +67,7 @@ export default function InspectorPanel(p: Props) {
       );
     }
     return (
-      <PanelShell title="✨ Option / Edge">
+      <PanelShell title="Option / Edge">
         <OptionEditor
           dialogue={dialogue}
           sourceBlockKey={selectedEdge.sourceBlockKey}
@@ -79,6 +88,32 @@ export default function InspectorPanel(p: Props) {
             );
             onSelectEdge(null);
           }}
+          onCheckAdd={() =>
+            p.onAddCheck(selectedEdge.sourceBlockKey, selectedEdge.optionIndex)
+          }
+          onCheckChange={(i, v) =>
+            p.onChangeCheck(
+              selectedEdge.sourceBlockKey,
+              selectedEdge.optionIndex,
+              i,
+              v,
+            )
+          }
+          onCheckDelete={(i) =>
+            p.onDeleteCheck(
+              selectedEdge.sourceBlockKey,
+              selectedEdge.optionIndex,
+              i,
+            )
+          }
+          onCheckMove={(from, to) =>
+            p.onMoveCheck(
+              selectedEdge.sourceBlockKey,
+              selectedEdge.optionIndex,
+              from,
+              to,
+            )
+          }
           onActionAdd={() =>
             p.onAddAction(
               selectedEdge.sourceBlockKey,
@@ -128,7 +163,7 @@ export default function InspectorPanel(p: Props) {
       );
     }
     return (
-      <PanelShell title="📝 Block">
+      <PanelShell title="Block">
         <BlockEditor
           blockKey={selectedBlock}
           block={block}
@@ -153,8 +188,8 @@ export default function InspectorPanel(p: Props) {
   }
 
   return (
-    <PanelShell title="✨ Inspector">
-      <div className="text-sm text-ink/60 italic">
+    <PanelShell title="Inspector">
+      <div className="text-sm text-ink-500 italic">
         Click a block or an option/edge to start editing.
       </div>
     </PanelShell>
@@ -169,8 +204,8 @@ function PanelShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-full overflow-y-auto bg-cream border-l-4 border-rose-200">
-      <div className="sticky top-0 bg-rose-100 border-b-2 border-rose-200 px-3 py-2 font-extrabold text-sm text-ink">
+    <div className="h-full overflow-y-auto bg-paper-100 border-l border-paper-300">
+      <div className="sticky top-0 bg-paper-100 border-b border-paper-300 px-3 py-2 font-semibold text-xs uppercase tracking-widest text-ink-700">
         {title}
       </div>
       <div className="p-3">{children}</div>
@@ -186,11 +221,11 @@ function Empty({
   onClear: () => void;
 }) {
   return (
-    <PanelShell title="✨ Inspector">
-      <div className="text-sm text-ink/60 italic mb-2">{message}</div>
+    <PanelShell title="Inspector">
+      <div className="text-sm text-ink-500 italic mb-2">{message}</div>
       <button
         onClick={onClear}
-        className="text-xs px-3 py-1 rounded-full bg-rose-200 hover:bg-rose-300 border-2 border-rose-400 font-bold"
+        className="text-xs px-3 py-1 rounded-card bg-paper-50 hover:bg-paper-200 border border-paper-300 font-medium"
       >
         clear
       </button>

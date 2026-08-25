@@ -12,15 +12,19 @@ import { defaultDialogue } from "./data/defaultDialogue";
 import {
   addActionString,
   addBlock,
+  addCheckString,
   addOption,
   deleteActionString,
   deleteBlock,
+  deleteCheckString,
   deleteOption,
   duplicateBlock,
   moveActionString,
+  moveCheckString,
   moveOption,
   renameBlock,
   setActionString,
+  setCheckString,
   setMessage,
   setMethod,
   updateOption,
@@ -211,7 +215,7 @@ export default function App() {
       apply(
         addOption(dialogue, blockKey, {
           key: "exit",
-          check: "",
+          checks: [],
           actions: [],
           message: "",
         }),
@@ -226,7 +230,7 @@ export default function App() {
       apply(
         addOption(dialogue, source, {
           key: target,
-          check: "",
+          checks: [],
           actions: [],
           message: "",
         }),
@@ -279,6 +283,30 @@ export default function App() {
 
   const handleMethod = useCallback(
     (key: string, v: DialogueMethod) => apply(setMethod(dialogue, key, v)),
+    [dialogue, apply],
+  );
+
+  const handleAddCheck = useCallback(
+    (blockKey: string, optIndex: number) =>
+      apply(addCheckString(dialogue, blockKey, optIndex, "")),
+    [dialogue, apply],
+  );
+
+  const handleChangeCheck = useCallback(
+    (blockKey: string, optIndex: number, checkIndex: number, value: string) =>
+      apply(setCheckString(dialogue, blockKey, optIndex, checkIndex, value)),
+    [dialogue, apply],
+  );
+
+  const handleDeleteCheck = useCallback(
+    (blockKey: string, optIndex: number, checkIndex: number) =>
+      apply(deleteCheckString(dialogue, blockKey, optIndex, checkIndex)),
+    [dialogue, apply],
+  );
+
+  const handleMoveCheck = useCallback(
+    (blockKey: string, optIndex: number, from: number, to: number) =>
+      apply(moveCheckString(dialogue, blockKey, optIndex, from, to)),
     [dialogue, apply],
   );
 
@@ -388,6 +416,10 @@ export default function App() {
           onDeleteOption={handleDeleteOption}
           onMoveOption={handleMoveOption}
           onPatchOption={handlePatchOption}
+          onAddCheck={handleAddCheck}
+          onChangeCheck={handleChangeCheck}
+          onDeleteCheck={handleDeleteCheck}
+          onMoveCheck={handleMoveCheck}
           onAddAction={handleAddAction}
           onChangeAction={handleChangeAction}
           onDeleteAction={handleDeleteAction}

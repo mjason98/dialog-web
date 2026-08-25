@@ -44,7 +44,11 @@ export function duplicateBlock(
     ...dialogue,
     [newKey]: {
       ...original,
-      options: original.options.map((o) => ({ ...o, actions: [...o.actions] })),
+      options: original.options.map((o) => ({
+        ...o,
+        checks: [...o.checks],
+        actions: [...o.actions],
+      })),
     },
   };
 }
@@ -67,6 +71,7 @@ export function renameBlock(
       options: block.options.map((option) => ({
         ...option,
         key: option.key === oldKey ? newKey : option.key,
+        checks: [...option.checks],
         actions: [...option.actions],
       })),
     };
@@ -110,7 +115,7 @@ export function addOption(
   if (!dialogue[blockKey]) return dialogue;
   const newOption: DialogueOption = {
     key: option.key ?? "exit",
-    check: option.check ?? "",
+    checks: option.checks ?? [],
     actions: option.actions ?? [],
     message: option.message ?? "",
   };
@@ -165,19 +170,87 @@ export function moveOption(
   return { ...dialogue, [blockKey]: { ...block, options } };
 }
 
+/** Field of an option holding an ordered list of plain strings. */
+type StringListField = "actions" | "checks";
+
+function updateStringList(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  field: StringListField,
+  transform: (list: string[]) => string[] | null,
+): DialogueFile {
+  const block = dialogue[blockKey];
+  if (!block) return dialogue;
+  const option = block.options[optIndex];
+  if (!option) return dialogue;
+  const next = transform([...option[field]]);
+  if (!next) return dialogue;
+  return updateOption(dialogue, blockKey, optIndex, { [field]: next });
+}
+
+function addString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  field: StringListField,
+  value: string,
+): DialogueFile {
+  return updateStringList(dialogue, blockKey, optIndex, field, (list) => [
+    ...list,
+    value,
+  ]);
+}
+
+function setString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  field: StringListField,
+  index: number,
+  value: string,
+): DialogueFile {
+  return updateStringList(dialogue, blockKey, optIndex, field, (list) =>
+    list.map((s, i) => (i === index ? value : s)),
+  );
+}
+
+function deleteString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  field: StringListField,
+  index: number,
+): DialogueFile {
+  return updateStringList(dialogue, blockKey, optIndex, field, (list) =>
+    list.filter((_, i) => i !== index),
+  );
+}
+
+function moveString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  field: StringListField,
+  from: number,
+  to: number,
+): DialogueFile {
+  return updateStringList(dialogue, blockKey, optIndex, field, (list) => {
+    if (from < 0 || from >= list.length) return null;
+    if (to < 0 || to >= list.length) return null;
+    const [m] = list.splice(from, 1);
+    list.splice(to, 0, m);
+    return list;
+  });
+}
+
 export function addActionString(
   dialogue: DialogueFile,
   blockKey: string,
   optIndex: number,
   value = "",
 ): DialogueFile {
-  const block = dialogue[blockKey];
-  if (!block) return dialogue;
-  const option = block.options[optIndex];
-  if (!option) return dialogue;
-  return updateOption(dialogue, blockKey, optIndex, {
-    actions: [...option.actions, value],
-  });
+  return addString(dialogue, blockKey, optIndex, "actions", value);
 }
 
 export function setActionString(
@@ -187,12 +260,7 @@ export function setActionString(
   actionIndex: number,
   value: string,
 ): DialogueFile {
-  const block = dialogue[blockKey];
-  if (!block) return dialogue;
-  const option = block.options[optIndex];
-  if (!option) return dialogue;
-  const actions = option.actions.map((a, i) => (i === actionIndex ? value : a));
-  return updateOption(dialogue, blockKey, optIndex, { actions });
+  return setString(dialogue, blockKey, optIndex, "actions", actionIndex, value);
 }
 
 export function deleteActionString(
@@ -201,12 +269,7 @@ export function deleteActionString(
   optIndex: number,
   actionIndex: number,
 ): DialogueFile {
-  const block = dialogue[blockKey];
-  if (!block) return dialogue;
-  const option = block.options[optIndex];
-  if (!option) return dialogue;
-  const actions = option.actions.filter((_, i) => i !== actionIndex);
-  return updateOption(dialogue, blockKey, optIndex, { actions });
+  return deleteString(dialogue, blockKey, optIndex, "actions", actionIndex);
 }
 
 export function moveActionString(
@@ -216,14 +279,43 @@ export function moveActionString(
   from: number,
   to: number,
 ): DialogueFile {
-  const block = dialogue[blockKey];
-  if (!block) return dialogue;
-  const option = block.options[optIndex];
-  if (!option) return dialogue;
-  const actions = [...option.actions];
-  if (from < 0 || from >= actions.length) return dialogue;
-  if (to < 0 || to >= actions.length) return dialogue;
-  const [m] = actions.splice(from, 1);
-  actions.splice(to, 0, m);
-  return updateOption(dialogue, blockKey, optIndex, { actions });
+  return moveString(dialogue, blockKey, optIndex, "actions", from, to);
+}
+
+export function addCheckString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  value = "",
+): DialogueFile {
+  return addString(dialogue, blockKey, optIndex, "checks", value);
+}
+
+export function setCheckString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  checkIndex: number,
+  value: string,
+): DialogueFile {
+  return setString(dialogue, blockKey, optIndex, "checks", checkIndex, value);
+}
+
+export function deleteCheckString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  checkIndex: number,
+): DialogueFile {
+  return deleteString(dialogue, blockKey, optIndex, "checks", checkIndex);
+}
+
+export function moveCheckString(
+  dialogue: DialogueFile,
+  blockKey: string,
+  optIndex: number,
+  from: number,
+  to: number,
+): DialogueFile {
+  return moveString(dialogue, blockKey, optIndex, "checks", from, to);
 }

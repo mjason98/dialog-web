@@ -44,16 +44,16 @@ export default function BlockList({
     .sort((a, b) => (a === "root" ? -1 : b === "root" ? 1 : a.localeCompare(b)));
 
   return (
-    <div className="h-full flex flex-col bg-cream border-r-4 border-rose-200">
-      <div className="p-3 border-b-2 border-rose-200">
-        <div className="font-extrabold text-ink mb-2 text-sm uppercase tracking-wider">
-          📜 Blocks
+    <div className="h-full flex flex-col bg-paper-100 border-r border-paper-300">
+      <div className="p-3 border-b border-paper-300">
+        <div className="font-semibold text-ink-700 mb-2 text-xs uppercase tracking-widest">
+          Blocks
         </div>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="search…"
-          className="w-full px-3 py-1.5 rounded-full border-2 border-rose-200 focus:border-rose-400 outline-none text-sm bg-white"
+          className="w-full px-3 py-1.5 rounded-card border border-paper-300 focus:border-ink-500 outline-none text-sm bg-paper-50"
         />
       </div>
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -73,10 +73,10 @@ export default function BlockList({
                       setRenaming(null);
                     } else if (e.key === "Escape") setRenaming(null);
                   }}
-                  className="flex-1 px-2 py-1 rounded-md border-2 border-sky2-400 text-sm bg-white"
+                  className="flex-1 px-2 py-1 rounded-card border border-ink-500 text-sm bg-paper-50 font-mono"
                 />
                 <button
-                  className="text-xs px-2 bg-mint-200 rounded-md border-2 border-mint-400"
+                  className="text-xs px-2 bg-paper-50 rounded-card border border-paper-300 hover:bg-paper-200"
                   onClick={() => {
                     onRename(key, renameValue.trim());
                     setRenaming(null);
@@ -90,25 +90,22 @@ export default function BlockList({
           return (
             <div
               key={key}
-              className={`group flex items-center gap-1 px-3 py-2 rounded-xl cursor-pointer border-2 transition ${
+              className={`group flex items-center gap-1 px-3 py-2 rounded-card cursor-pointer border transition-colors ${
                 isSel
-                  ? "bg-rose-200 border-rose-400 shadow-cute"
-                  : "bg-white border-transparent hover:border-rose-200"
+                  ? "bg-paper-200 border-ink-500 text-ink"
+                  : "bg-paper-50 border-paper-300 hover:border-ink-300"
               }`}
               onClick={() => onSelect(key)}
             >
-              <span className="text-sm font-bold text-ink truncate flex-1">
-                {key === "root" ? "🏠 " : ""}
-                {key}
-              </span>
+              <span className="text-sm font-mono truncate flex-1">{key}</span>
               {flags?.error && (
-                <span title="errors" className="text-red-500">
-                  ⛔
+                <span title="errors" className="text-red-700 font-bold">
+                  !
                 </span>
               )}
               {flags?.warning && !flags?.error && (
-                <span title="warnings" className="text-amber-500">
-                  ⚠️
+                <span title="warnings" className="text-amber-700 font-bold">
+                  ?
                 </span>
               )}
               <div className="opacity-0 group-hover:opacity-100 flex gap-0.5">
@@ -147,7 +144,7 @@ export default function BlockList({
           );
         })}
       </div>
-      <div className="p-2 border-t-2 border-rose-200 flex gap-1">
+      <div className="p-2 border-t border-paper-300 flex gap-1">
         <input
           value={newKey}
           onChange={(e) => setNewKey(e.target.value)}
@@ -158,7 +155,7 @@ export default function BlockList({
               setNewKey("");
             }
           }}
-          className="flex-1 px-3 py-1.5 rounded-full border-2 border-mint-200 focus:border-mint-400 outline-none text-sm bg-white"
+          className="flex-1 px-3 py-1.5 rounded-card border border-paper-300 focus:border-ink-500 outline-none text-sm bg-paper-50 font-mono"
         />
         <button
           onClick={() => {
@@ -167,7 +164,7 @@ export default function BlockList({
               setNewKey("");
             }
           }}
-          className="px-3 py-1.5 rounded-full bg-mint-200 hover:bg-mint-300 border-2 border-mint-400 text-sm font-bold text-ink shadow-cute"
+          className="px-3 py-1.5 rounded-card bg-ink-900 hover:bg-ink-700 border border-ink-900 text-sm font-medium text-paper-50 shadow-soft"
         >
           ＋
         </button>
@@ -189,7 +186,7 @@ function IconBtn({
     <button
       title={title}
       onClick={onClick}
-      className="text-xs w-6 h-6 rounded-md hover:bg-rose-50 grid place-items-center"
+      className="text-xs w-6 h-6 rounded-sm hover:bg-paper-200 grid place-items-center"
     >
       {children}
     </button>

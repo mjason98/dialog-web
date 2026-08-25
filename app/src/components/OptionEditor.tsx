@@ -1,5 +1,5 @@
 import type { DialogueFile, DialogueOption } from "../types/dialogue";
-import ActionListEditor from "./ActionListEditor";
+import StringListEditor from "./StringListEditor";
 
 type Props = {
   dialogue: DialogueFile;
@@ -9,6 +9,10 @@ type Props = {
   parentMethod: string;
   onPatch: (patch: Partial<DialogueOption>) => void;
   onDelete: () => void;
+  onCheckAdd: () => void;
+  onCheckChange: (i: number, v: string) => void;
+  onCheckDelete: (i: number) => void;
+  onCheckMove: (from: number, to: number) => void;
   onActionAdd: () => void;
   onActionChange: (i: number, v: string) => void;
   onActionDelete: (i: number) => void;
@@ -24,6 +28,10 @@ export default function OptionEditor({
   parentMethod,
   onPatch,
   onDelete,
+  onCheckAdd,
+  onCheckChange,
+  onCheckDelete,
+  onCheckMove,
   onActionAdd,
   onActionChange,
   onActionDelete,
@@ -36,7 +44,7 @@ export default function OptionEditor({
 
   return (
     <div className="space-y-3">
-      <div className="text-xs font-bold text-ink/60 uppercase tracking-wider">
+      <div className="text-xs font-semibold text-ink-500 uppercase tracking-widest">
         Edge: {sourceBlockKey} → {option.key || "?"} (#{optionIndex})
       </div>
 
@@ -46,10 +54,10 @@ export default function OptionEditor({
             list="block-key-options"
             value={option.key}
             onChange={(e) => onPatch({ key: e.target.value })}
-            className={`flex-1 px-2 py-1 rounded-md border-2 outline-none bg-white font-mono text-sm ${
+            className={`flex-1 px-2 py-1 rounded-card border outline-none bg-paper-50 font-mono text-sm ${
               targetExists
-                ? "border-mint-200 focus:border-mint-400"
-                : "border-red-300 focus:border-red-500"
+                ? "border-paper-300 focus:border-ink-500"
+                : "border-red-700 focus:border-red-700"
             }`}
           />
           <datalist id="block-key-options">
@@ -61,7 +69,7 @@ export default function OptionEditor({
           {option.key && targetExists && option.key !== "exit" && (
             <button
               onClick={() => onJumpToBlock(option.key)}
-              className="text-xs px-2 rounded-md bg-sky2-200 hover:bg-sky2-300 border-2 border-sky2-400 font-bold"
+              className="text-xs px-2 rounded-card bg-paper-50 hover:bg-paper-200 border border-paper-300 font-medium"
               title="jump to target"
             >
               →
@@ -69,8 +77,8 @@ export default function OptionEditor({
           )}
         </div>
         {!targetExists && option.key && (
-          <div className="text-[11px] text-red-500 mt-1">
-            ⛔ no such block. use 'exit' or create the block first.
+          <div className="text-[11px] text-red-700 mt-1">
+            no such block. use 'exit' or create the block first.
           </div>
         )}
       </Field>
@@ -87,22 +95,32 @@ export default function OptionEditor({
           value={option.message ?? ""}
           onChange={(e) => onPatch({ message: e.target.value })}
           placeholder='e.g. "leave"'
-          className="w-full px-2 py-1 rounded-md border-2 border-rose-200 focus:border-rose-400 outline-none bg-white text-sm"
+          className="w-full px-2 py-1 rounded-card border border-paper-300 focus:border-ink-500 outline-none bg-paper-50 text-sm font-serif"
         />
       </Field>
 
-      <Field label="check" hint="empty = always enabled">
-        <input
-          value={option.check}
-          onChange={(e) => onPatch({ check: e.target.value })}
+      <Field
+        label={`checks (${option.checks.length})`}
+        hint="all must pass · none = always enabled"
+      >
+        <StringListEditor
+          items={option.checks}
           placeholder="e.g. qkey_quest1_0"
-          className="w-full px-2 py-1 rounded-md border-2 border-sky2-200 focus:border-sky2-400 outline-none bg-white font-mono text-sm"
+          addLabel="check"
+          emptyLabel="no checks — always enabled"
+          onChange={onCheckChange}
+          onAdd={onCheckAdd}
+          onDelete={onCheckDelete}
+          onMove={onCheckMove}
         />
       </Field>
 
-      <Field label="actions">
-        <ActionListEditor
-          actions={option.actions}
+      <Field label={`actions (${option.actions.length})`}>
+        <StringListEditor
+          items={option.actions}
+          placeholder="e.g. addk_quest1_0"
+          addLabel="action"
+          emptyLabel="no actions"
           onChange={onActionChange}
           onAdd={onActionAdd}
           onDelete={onActionDelete}
@@ -112,9 +130,9 @@ export default function OptionEditor({
 
       <button
         onClick={onDelete}
-        className="text-xs px-3 py-1.5 rounded-full bg-red-100 hover:bg-red-200 border-2 border-red-300 font-bold text-red-700"
+        className="text-xs px-3 py-1.5 rounded-card bg-paper-50 hover:bg-red-50 border border-red-700 font-medium text-red-700"
       >
-        🗑️ delete option
+        delete option
       </button>
     </div>
   );
@@ -131,10 +149,10 @@ function Field({
 }) {
   return (
     <div>
-      <div className="text-[11px] uppercase font-bold text-ink/60 tracking-wider mb-1">
+      <div className="text-[11px] uppercase font-semibold text-ink-500 tracking-widest mb-1">
         {label}
         {hint && (
-          <span className="ml-2 normal-case font-normal text-ink/40">
+          <span className="ml-2 normal-case font-normal text-ink-300">
             {hint}
           </span>
         )}

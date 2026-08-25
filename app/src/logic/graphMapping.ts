@@ -9,6 +9,10 @@ export type DialogueNodeData = {
   message: string;
   method: string;
   optionCount: number;
+  /** Total checks across the block's options. */
+  checkCount: number;
+  /** Total actions across the block's options. */
+  actionCount: number;
   isExit?: boolean;
   hasError?: boolean;
   hasWarning?: boolean;
@@ -17,22 +21,22 @@ export type DialogueNodeData = {
 export type DialogueEdgeData = {
   sourceBlockKey: string;
   optionIndex: number;
-  check: string;
+  checks: string[];
   actions: string[];
   message?: string;
   broken?: boolean;
 };
 
 /**
- * Compute a left-to-right hierarchical layout: `root` sits in the leftmost
- * column and each block cascades into the column to its right based on its
- * depth (shortest hop count) from root. Nodes in the same column stack
- * vertically. Useful for arranging an imported dialogue so the flow reads
- * naturally instead of an arbitrary grid.
+ * Compute a top-to-bottom hierarchical layout: `root` sits in the topmost
+ * row and each block cascades into the row below based on its depth (shortest
+ * hop count) from root. Nodes at the same depth spread horizontally. Useful
+ * for arranging an imported dialogue so the flow reads naturally instead of an
+ * arbitrary grid.
  */
 export function autoLayout(dialogue: DialogueFile): NodePositions {
-  const COL_WIDTH = 340;
-  const ROW_HEIGHT = 170;
+  const COL_WIDTH = 280;
+  const ROW_HEIGHT = 240;
   const keys = Object.keys(dialogue);
   if (keys.length === 0) return {};
 
@@ -56,7 +60,7 @@ export function autoLayout(dialogue: DialogueFile): NodePositions {
     }
   }
 
-  // Unreachable blocks fall back to the leftmost column.
+  // Unreachable blocks fall back to the topmost row.
   for (const key of keys) {
     if (!(key in depth)) depth[key] = 0;
   }
@@ -64,22 +68,22 @@ export function autoLayout(dialogue: DialogueFile): NodePositions {
   let maxDepth = 0;
   for (const d of Object.values(depth)) maxDepth = Math.max(maxDepth, d);
 
-  const byColumn: Record<number, string[]> = {};
+  const byRow: Record<number, string[]> = {};
   for (const [key, d] of Object.entries(depth)) {
-    (byColumn[d] ??= []).push(key);
+    (byRow[d] ??= []).push(key);
   }
 
   const positions: NodePositions = {};
-  for (const [dStr, columnKeys] of Object.entries(byColumn)) {
+  for (const [dStr, rowKeys] of Object.entries(byRow)) {
     const d = Number(dStr);
-    columnKeys.forEach((key, row) => {
-      positions[key] = { x: d * COL_WIDTH, y: row * ROW_HEIGHT };
+    rowKeys.forEach((key, col) => {
+      positions[key] = { x: col * COL_WIDTH, y: d * ROW_HEIGHT };
     });
   }
 
   if (shouldShowExitNode(dialogue)) {
-    const exitColumn = maxDepth + 1;
-    positions["__exit__"] = { x: exitColumn * COL_WIDTH, y: 0 };
+    const exitRow = maxDepth + 1;
+    positions["__exit__"] = { x: 0, y: exitRow * ROW_HEIGHT };
   }
 
   return positions;
@@ -108,12 +112,16 @@ export function dialogueToNodes(
     issueMap.set(issue.blockKey, cur);
   }
 
+  // Blocks the user has never dragged fall back to the top-down hierarchical
+  // layout instead of an arbitrary grid.
+  const auto = autoLayout(dialogue);
   const entries = Object.entries(dialogue);
   const nodes: Node<DialogueNodeData>[] = entries.map(([key, block], i) => {
     const pos =
-      positions[key] ?? {
+      positions[key] ??
+      auto[key] ?? {
         x: (i % 4) * 280,
-        y: Math.floor(i / 4) * 200,
+        y: Math.floor(i / 4) * 240,
       };
     const flags = issueMap.get(key) ?? { error: false, warning: false };
     return {
@@ -125,6 +133,14 @@ export function dialogueToNodes(
         message: block.message,
         method: block.method,
         optionCount: block.options.length,
+        checkCount: block.options.reduce(
+          (n, o) => n + (o.checks?.length ?? 0),
+          0,
+        ),
+        actionCount: block.options.reduce(
+          (n, o) => n + (o.actions?.length ?? 0),
+          0,
+        ),
         hasError: flags.error,
         hasWarning: flags.warning,
       },
@@ -132,10 +148,11 @@ export function dialogueToNodes(
   });
 
   if (shouldShowExitNode(dialogue)) {
-    const exitPos = positions["__exit__"] ?? {
-      x: (entries.length % 4) * 280,
-      y: Math.floor(entries.length / 4) * 200,
-    };
+    const exitPos = positions["__exit__"] ??
+      auto["__exit__"] ?? {
+        x: (entries.length % 4) * 280,
+        y: Math.floor(entries.length / 4) * 240,
+      };
     nodes.push({
       id: "exit",
       type: "dialogueNode",
@@ -145,6 +162,8 @@ export function dialogueToNodes(
         message: "(end dialogue)",
         method: "—",
         optionCount: 0,
+        checkCount: 0,
+        actionCount: 0,
         isExit: true,
       },
     });
@@ -163,7 +182,7 @@ export function dialogueToEdges(dialogue: DialogueFile): Edge<DialogueEdgeData>[
         !!option.key &&
         !blockKeys.has(option.key) &&
         !RESERVED_KEYS.includes(option.key);
-      const conditional = !!option.check;
+      const conditional = option.checks.length > 0;
       const className = [
         broken ? "broken" : "",
         conditional ? "conditional" : "",
@@ -176,13 +195,13 @@ export function dialogueToEdges(dialogue: DialogueFile): Edge<DialogueEdgeData>[
         target: option.key || "exit",
         label: option.message || option.key || "?",
         labelBgPadding: [6, 3],
-        labelBgBorderRadius: 8,
-        labelBgStyle: { fill: "#fff", stroke: "#3a3149", strokeWidth: 0 },
+        labelBgBorderRadius: 4,
+        labelBgStyle: { fill: "#faf9f6", stroke: "#d7d2c4", strokeWidth: 1 },
         className,
         data: {
           sourceBlockKey: blockKey,
           optionIndex: index,
-          check: option.check,
+          checks: option.checks,
           actions: option.actions,
           message: option.message,
           broken,

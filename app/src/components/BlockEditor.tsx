@@ -37,12 +37,12 @@ export default function BlockEditor({
 
   return (
     <div className="space-y-4">
-      <div className="text-xs font-bold text-ink/60 uppercase tracking-wider">
-        Block: <span className="font-mono">{blockKey}</span>
+      <div className="text-xs font-semibold text-ink-500 uppercase tracking-widest">
+        Block: <span className="font-mono normal-case text-ink">{blockKey}</span>
       </div>
 
       <div>
-        <div className="text-[11px] uppercase font-bold text-ink/60 tracking-wider mb-1">
+        <div className="text-[11px] uppercase font-semibold text-ink-500 tracking-widest mb-1">
           message
         </div>
         <textarea
@@ -50,12 +50,12 @@ export default function BlockEditor({
           onChange={(e) => onMessage(e.target.value)}
           rows={4}
           placeholder="what the NPC says…"
-          className="w-full px-3 py-2 rounded-xl border-2 border-rose-200 focus:border-rose-400 outline-none bg-white text-sm resize-y"
+          className="w-full px-3 py-2 rounded-card border border-paper-300 focus:border-ink-500 outline-none bg-paper-50 text-sm resize-y"
         />
       </div>
 
       <div>
-        <div className="text-[11px] uppercase font-bold text-ink/60 tracking-wider mb-1">
+        <div className="text-[11px] uppercase font-semibold text-ink-500 tracking-widest mb-1">
           method
         </div>
         <div className="flex flex-wrap gap-1">
@@ -63,10 +63,10 @@ export default function BlockEditor({
             <button
               key={m}
               onClick={() => onMethod(m)}
-              className={`text-xs px-3 py-1 rounded-full border-2 font-bold transition ${
+              className={`text-xs px-3 py-1 rounded-card border font-medium transition-colors ${
                 block.method === m
-                  ? "bg-rose-300 border-rose-500 text-white shadow-cute"
-                  : "bg-white border-rose-200 hover:bg-rose-100 text-ink"
+                  ? "bg-ink-900 border-ink-900 text-paper-50"
+                  : "bg-paper-50 border-paper-300 hover:bg-paper-200 text-ink"
               }`}
             >
               {m}
@@ -77,14 +77,14 @@ export default function BlockEditor({
 
       <div>
         <div className="flex items-center mb-1">
-          <div className="text-[11px] uppercase font-bold text-ink/60 tracking-wider flex-1">
+          <div className="text-[11px] uppercase font-semibold text-ink-500 tracking-widest flex-1">
             options ({block.options.length})
           </div>
           <button
             onClick={onAddOption}
-            className="text-xs px-3 py-1 rounded-full bg-mint-200 hover:bg-mint-300 border-2 border-mint-400 font-bold shadow-cute"
+            className="text-xs px-3 py-1 rounded-card bg-paper-50 hover:bg-paper-200 border border-paper-300 font-medium"
           >
-            ＋ option
+            + option
           </button>
         </div>
         <div className="space-y-2">
@@ -96,19 +96,19 @@ export default function BlockEditor({
               <div
                 key={i}
                 onClick={() => onSelectOption(i)}
-                className={`rounded-xl border-2 p-2 cursor-pointer transition ${
+                className={`rounded-card border p-2 cursor-pointer transition-colors ${
                   isSel
-                    ? "bg-rose-100 border-rose-400 shadow-cute"
-                    : "bg-white border-gray-200 hover:border-rose-200"
+                    ? "bg-paper-200 border-ink-500"
+                    : "bg-paper-50 border-paper-300 hover:border-ink-300"
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <span className="text-xs font-bold text-ink/60">#{i}</span>
-                  <span className="text-sm flex-1 truncate">
+                  <span className="text-xs font-mono text-ink-500">#{i}</span>
+                  <span className="text-sm flex-1 truncate font-serif">
                     {opt.message ? (
                       <span>“{opt.message}”</span>
                     ) : (
-                      <span className="text-ink/40 italic">no message</span>
+                      <span className="text-ink-300 italic">no message</span>
                     )}
                   </span>
                   <button
@@ -117,7 +117,7 @@ export default function BlockEditor({
                       onMoveOption(i, i - 1);
                     }}
                     disabled={i === 0}
-                    className="text-xs w-6 h-6 grid place-items-center rounded-md hover:bg-gray-100 disabled:opacity-30"
+                    className="text-xs w-6 h-6 grid place-items-center rounded-sm hover:bg-paper-200 disabled:opacity-30"
                   >
                     ↑
                   </button>
@@ -127,7 +127,7 @@ export default function BlockEditor({
                       onMoveOption(i, i + 1);
                     }}
                     disabled={i === block.options.length - 1}
-                    className="text-xs w-6 h-6 grid place-items-center rounded-md hover:bg-gray-100 disabled:opacity-30"
+                    className="text-xs w-6 h-6 grid place-items-center rounded-sm hover:bg-paper-200 disabled:opacity-30"
                   >
                     ↓
                   </button>
@@ -136,14 +136,14 @@ export default function BlockEditor({
                       e.stopPropagation();
                       onDeleteOption(i);
                     }}
-                    className="text-xs w-6 h-6 grid place-items-center rounded-md hover:bg-rose-100"
+                    className="text-xs w-6 h-6 grid place-items-center rounded-sm hover:bg-paper-200"
                     title="delete"
                   >
                     🗑️
                   </button>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-[10px] uppercase font-bold text-ink/60">
+                  <span className="text-[10px] uppercase font-bold text-ink-500">
                     →
                   </span>
                   <input
@@ -153,15 +153,18 @@ export default function BlockEditor({
                     }
                     onClick={(e) => e.stopPropagation()}
                     list="block-key-options"
-                    className={`flex-1 px-2 py-1 text-xs rounded-md border-2 outline-none bg-white font-mono ${
+                    className={`flex-1 px-2 py-1 text-xs rounded-sm border outline-none bg-paper-50 font-mono ${
                       targetExists
-                        ? "border-mint-200 focus:border-mint-400"
-                        : "border-red-300"
+                        ? "border-paper-300 focus:border-ink-500"
+                        : "border-red-700"
                     }`}
                   />
-                  {opt.check && (
-                    <span title={`check: ${opt.check}`} className="text-xs">
-                      🔒
+                  {opt.checks.length > 0 && (
+                    <span
+                      title={`checks (all must pass): ${opt.checks.join(", ")}`}
+                      className="text-xs"
+                    >
+                      🔒{opt.checks.length}
                     </span>
                   )}
                   {opt.actions.length > 0 && (
@@ -177,7 +180,7 @@ export default function BlockEditor({
             );
           })}
           {block.options.length === 0 && (
-            <div className="text-xs text-ink/50 italic">
+            <div className="text-xs text-ink-500 italic">
               no options yet. add one to link to another block.
             </div>
           )}

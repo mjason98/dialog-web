@@ -16,16 +16,16 @@ export default function ValidationPanel({
   const warnings = issues.filter((i) => i.type === "warning");
 
   return (
-    <div className="bg-cream border-t-4 border-rose-200 max-h-44 overflow-y-auto">
-      <div className="px-3 py-2 bg-rose-100 border-b-2 border-rose-200 font-extrabold text-sm flex gap-3 items-center sticky top-0">
-        <span>🔎 Validation</span>
-        <span className="text-red-600">⛔ {errors.length}</span>
-        <span className="text-amber-600">⚠️ {warnings.length}</span>
+    <div className="bg-paper-100 border-t border-paper-300 max-h-44 overflow-y-auto">
+      <div className="px-3 py-2 bg-paper-100 border-b border-paper-300 font-semibold text-xs uppercase tracking-widest flex gap-3 items-center sticky top-0">
+        <span>Validation</span>
+        <span className="text-red-700">{errors.length} errors</span>
+        <span className="text-amber-700">{warnings.length} warnings</span>
         {issues.length === 0 && (
-          <span className="text-mint-500">✓ all good</span>
+          <span className="text-ink-500 normal-case tracking-normal">all good</span>
         )}
       </div>
-      <ul className="text-xs divide-y divide-rose-100">
+      <ul className="text-xs divide-y divide-paper-200">
         {issues.map((i, idx) => (
           <li
             key={idx}
@@ -39,13 +39,13 @@ export default function ValidationPanel({
                 onJumpToBlock(i.blockKey);
               }
             }}
-            className="px-3 py-1.5 hover:bg-rose-50 cursor-pointer flex gap-2"
+            className="px-3 py-1.5 hover:bg-paper-200 cursor-pointer flex gap-2"
           >
-            <span>
-              {i.type === "error" ? "⛔" : "⚠️"}
+            <span className={i.type === "error" ? "text-red-700 font-bold" : "text-amber-700 font-bold"}>
+              {i.type === "error" ? "!" : "?"}
             </span>
-            <span className="font-mono text-ink/60 shrink-0">{i.path}</span>
-            <span className="flex-1 text-ink">{i.message}</span>
+            <span className="font-mono text-ink-500 shrink-0">{i.path}</span>
+            <span className="flex-1 text-ink-700">{i.message}</span>
           </li>
         ))}
       </ul>

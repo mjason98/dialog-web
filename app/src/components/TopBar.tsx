@@ -28,17 +28,12 @@ export default function TopBar({
   const fileRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex items-center gap-2 px-4 py-3 bg-rose-100 border-b-4 border-rose-200">
-      <div className="text-xl font-extrabold text-ink mr-2 flex items-center gap-2">
-        <span aria-hidden>💬</span>
-        <span>Dialogue Editor</span>
+    <div className="flex items-center gap-2 px-4 py-3 bg-paper-100 border-b border-paper-300">
+      <div className="font-serif text-xl font-semibold text-ink mr-3 tracking-tight">
+        Dialogue Editor
       </div>
-      <Btn onClick={onNew} color="mint">
-        ✨ New
-      </Btn>
-      <Btn onClick={() => fileRef.current?.click()} color="sky">
-        📂 Import
-      </Btn>
+      <Btn onClick={onNew}>New</Btn>
+      <Btn onClick={() => fileRef.current?.click()}>Import</Btn>
       <input
         ref={fileRef}
         type="file"
@@ -52,25 +47,21 @@ export default function TopBar({
       />
       <Btn
         onClick={onExport}
-        color="rose"
+        variant="primary"
         disabled={hasErrors}
         title={
           hasErrors ? "Fix validation errors before exporting." : "Download JSON"
         }
       >
-        💾 Export
+        Export
       </Btn>
-      <Btn onClick={onPreview} color="sky">
-        👀 Preview
-      </Btn>
-      <Btn onClick={onValidate} color="butter">
-        🔎 Validate
-      </Btn>
+      <Btn onClick={onPreview}>Preview</Btn>
+      <Btn onClick={onValidate}>Validate</Btn>
       <div className="ml-auto flex items-center gap-2">
-        <Btn onClick={onUndo} color="white" disabled={!canUndo}>
+        <Btn onClick={onUndo} disabled={!canUndo}>
           ↶ Undo
         </Btn>
-        <Btn onClick={onRedo} color="white" disabled={!canRedo}>
+        <Btn onClick={onRedo} disabled={!canRedo}>
           ↷ Redo
         </Btn>
       </div>
@@ -81,29 +72,26 @@ export default function TopBar({
 function Btn({
   children,
   onClick,
-  color,
+  variant = "default",
   disabled,
   title,
 }: {
   children: React.ReactNode;
   onClick: () => void;
-  color: "mint" | "sky" | "rose" | "butter" | "white";
+  variant?: "default" | "primary";
   disabled?: boolean;
   title?: string;
 }) {
-  const map: Record<string, string> = {
-    mint: "bg-mint-200 hover:bg-mint-300 border-mint-400",
-    sky: "bg-sky2-200 hover:bg-sky2-300 border-sky2-400",
-    rose: "bg-rose-200 hover:bg-rose-300 border-rose-400",
-    butter: "bg-butter hover:bg-yellow-200 border-yellow-300",
-    white: "bg-white hover:bg-gray-100 border-gray-300",
-  };
+  const style =
+    variant === "primary"
+      ? "bg-ink-900 hover:bg-ink-700 border-ink-900 text-paper-50"
+      : "bg-paper-50 hover:bg-paper-200 border-paper-300 text-ink";
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`${map[color]} text-ink font-bold text-sm px-3 py-1.5 rounded-full border-2 shadow-cute active:translate-y-[2px] active:shadow-none disabled:opacity-40 disabled:cursor-not-allowed transition`}
+      className={`${style} font-medium text-sm px-3 py-1.5 rounded-card border shadow-soft disabled:opacity-40 disabled:cursor-not-allowed transition-colors`}
     >
       {children}
     </button>

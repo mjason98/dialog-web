@@ -103,6 +103,37 @@ export function validateDialogue(dialogue: DialogueFile): ValidationIssue[] {
           message: `Option links to missing block: '${option.key}'.`,
         });
       }
+      if (!Array.isArray(option.checks)) {
+        issues.push({
+          type: "error",
+          path,
+          blockKey,
+          optionIndex: index,
+          message: "Option checks must be an array.",
+        });
+      } else {
+        const seenChecks = new Set<string>();
+        option.checks.forEach((c, ci) => {
+          if (c === "") {
+            issues.push({
+              type: "warning",
+              path: `${path}.checks[${ci}]`,
+              blockKey,
+              optionIndex: index,
+              message: "Empty check string. Remove it or replace.",
+            });
+          } else if (seenChecks.has(c)) {
+            issues.push({
+              type: "warning",
+              path: `${path}.checks[${ci}]`,
+              blockKey,
+              optionIndex: index,
+              message: `Duplicate check '${c}'.`,
+            });
+          }
+          seenChecks.add(c);
+        });
+      }
       if (!Array.isArray(option.actions)) {
         issues.push({
           type: "error",

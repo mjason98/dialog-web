@@ -16,7 +16,7 @@ export default function DialogueNode({
     return (
       <div
         className={`px-4 py-2 rounded-card border border-dashed border-ink-300 bg-paper-100 font-medium text-ink-700 text-sm ${
-          selected ? "ring-2 ring-ink-900" : ""
+          selected ? "ring-2 ring-ink-900" : data.isParent ? "ring-2 ring-amber-500" : data.isChild ? "ring-2 ring-sky-500" : ""
         }`}
       >
         <Handle type="target" position={Position.Top} className="!bg-ink-500" />
@@ -36,7 +36,7 @@ export default function DialogueNode({
   return (
     <div
       className={`w-56 rounded-card ${bg} border ${border} shadow-soft p-3 ${
-        selected ? "ring-2 ring-ink-900" : ""
+        selected ? "ring-2 ring-ink-900" : data.isParent ? "ring-2 ring-amber-500" : data.isChild ? "ring-2 ring-sky-500" : ""
       }`}
     >
       <Handle type="target" position={Position.Top} className="!bg-ink-500" />

@@ -16,6 +16,8 @@ export type DialogueNodeData = {
   isExit?: boolean;
   hasError?: boolean;
   hasWarning?: boolean;
+  isParent?: boolean;
+  isChild?: boolean;
 };
 
 export type DialogueEdgeData = {

@@ -65,13 +65,32 @@ export default function DialogueGraph({
   const [edges, setEdges] = useState<Edge<DialogueEdgeData>[]>(initialEdges);
 
   useEffect(() => {
+    let parentIds = new Set<string>();
+    let childIds = new Set<string>();
+    if (selectedBlock && selectedBlock in dialogue) {
+      childIds = new Set(
+        dialogue[selectedBlock].options
+          .map((o) => o.key)
+          .filter((k) => k && k in dialogue),
+      );
+      for (const [key, block] of Object.entries(dialogue)) {
+        if (block.options.some((o) => o.key === selectedBlock)) {
+          parentIds.add(key);
+        }
+      }
+    }
     setNodes(
       initialNodes.map((n) => ({
         ...n,
         selected: n.id === selectedBlock,
+        data: {
+          ...n.data,
+          isParent: parentIds.has(n.id),
+          isChild: childIds.has(n.id),
+        },
       })),
     );
-  }, [initialNodes, selectedBlock]);
+  }, [initialNodes, selectedBlock, dialogue]);
 
   useEffect(() => {
     setEdges(
